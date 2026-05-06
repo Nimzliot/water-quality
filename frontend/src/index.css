@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --bg-1: #120f0d;
+  --bg-2: #1b1713;
+  --panel: rgba(34, 28, 23, 0.82);
+  --panel-soft: rgba(48, 39, 31, 0.7);
+  --border: rgba(240, 220, 197, 0.12);
+  --text-soft: #b8aca0;
+  --accent: #e0b07a;
+  --accent-soft: #7a5b3c;
+}
+
+body {
+  @apply min-h-screen text-slate-100 antialiased;
+  background-image:
+    radial-gradient(circle at top left, rgba(224, 176, 122, 0.16), transparent 22%),
+    radial-gradient(circle at 85% 0%, rgba(170, 129, 86, 0.12), transparent 18%),
+    radial-gradient(circle at 50% 100%, rgba(255, 236, 214, 0.05), transparent 24%),
+    linear-gradient(135deg, var(--bg-1) 0%, #17120f 35%, var(--bg-2) 70%, #100d0b 100%);
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  overflow-x: hidden;
+}
+
+#root {
+  @apply min-h-screen;
+}
+
+.glass-panel {
+  @apply rounded-[30px] backdrop-blur-2xl;
+  background: linear-gradient(180deg, rgba(37, 30, 24, 0.92), rgba(23, 19, 16, 0.82));
+  border: 1px solid var(--border);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 244, 231, 0.04);
+}
+
+.input-field {
+  @apply w-full rounded-2xl px-4 py-3 text-sm text-white outline-none transition duration-200;
+  border: 1px solid rgba(240, 220, 197, 0.12);
+  background: rgba(20, 17, 14, 0.86);
+}
+
+.input-field:focus {
+  border-color: rgba(224, 176, 122, 0.6);
+  background: rgba(17, 14, 11, 0.96);
+}
+
+.primary-button {
+  @apply rounded-2xl px-4 py-3 font-medium text-stone-950 transition disabled:cursor-not-allowed disabled:opacity-60;
+  background: linear-gradient(135deg, #f0c89b, #d19a5e);
+  box-shadow: 0 14px 30px rgba(209, 154, 94, 0.22);
+}
+
+.primary-button:hover {
+  background: linear-gradient(135deg, #f5d5b0, #dfaa71);
+}
+
+.secondary-button {
+  @apply rounded-2xl px-4 py-3 font-medium text-stone-100 transition;
+  border: 1px solid rgba(240, 220, 197, 0.12);
+  background: rgba(255, 248, 239, 0.04);
+}
+
+.secondary-button:hover {
+  background: rgba(255, 248, 239, 0.08);
+}
+
+.section-title {
+  @apply text-[11px] font-medium uppercase tracking-[0.38em];
+  color: #d6a878;
+}
+
+.status-chip {
+  @apply inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-medium uppercase tracking-[0.24em];
+}
+
+.tone-card {
+  background: linear-gradient(180deg, rgba(55, 44, 35, 0.78), rgba(28, 23, 18, 0.82));
+  border: 1px solid rgba(240, 220, 197, 0.08);
+}
