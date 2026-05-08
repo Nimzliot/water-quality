@@ -27,6 +27,23 @@ function Analytics() {
         </div>
       </div>
 
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="glass-panel p-5">
+          <p className="section-title">Adaptive Kalman Gain pH</p>
+          <p className="mt-3 text-3xl font-semibold text-cyan-100">{stats?.averages?.kalman_gain_ph ?? 0}</p>
+          <p className="mt-3 text-sm leading-7 text-slate-400">
+            Average correction weight applied to pH measurements after the prediction step.
+          </p>
+        </div>
+        <div className="glass-panel p-5">
+          <p className="section-title">Adaptive Kalman Gain Temp</p>
+          <p className="mt-3 text-3xl font-semibold text-amber-100">{stats?.averages?.kalman_gain_temperature ?? 0}</p>
+          <p className="mt-3 text-sm leading-7 text-slate-400">
+            Average correction weight applied to temperature measurements under adaptive noise tuning.
+          </p>
+        </div>
+      </div>
+
       <div className="grid gap-4 xl:grid-cols-2">
         <PHChart data={chartData} />
         <TemperatureChart data={chartData} />

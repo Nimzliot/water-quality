@@ -2,6 +2,29 @@ const supabase = require("../config/supabase");
 
 const HEARTBEAT_TIMEOUT_MS = 15000;
 
+const getHardwareState = (heartbeat) => {
+  if (!heartbeat) {
+    return {
+      connected: false,
+      status: "DISCONNECTED",
+    };
+  }
+
+  if (heartbeat.status === "OFFLINE") {
+    return {
+      connected: false,
+      status: "OFFLINE",
+    };
+  }
+
+  const isFresh = Date.now() - new Date(heartbeat.created_at).getTime() < HEARTBEAT_TIMEOUT_MS;
+
+  return {
+    connected: isFresh,
+    status: isFresh ? "CONNECTED" : "DISCONNECTED",
+  };
+};
+
 const getDashboardStats = async (req, res, next) => {
   try {
     const { data, error } = await supabase
@@ -32,9 +55,7 @@ const getDashboardStats = async (req, res, next) => {
     const criticalCount = readings.filter((row) => row.status === "CRITICAL").length;
     const faultCount = sensorFaultCount + contaminationCount + criticalCount;
     const normalCount = readings.filter((row) => row.status === "NORMAL").length;
-    const hardwareConnected = latestHeartbeat
-      ? Date.now() - new Date(latestHeartbeat.created_at).getTime() < HEARTBEAT_TIMEOUT_MS
-      : false;
+    const hardwareState = getHardwareState(latestHeartbeat);
 
     const averages = readings.length
       ? {
@@ -48,12 +69,20 @@ const getDashboardStats = async (req, res, next) => {
           residual_temperature: Number(
             (readings.reduce((sum, row) => sum + Math.abs(row.residual_temperature), 0) / readings.length).toFixed(3)
           ),
+          kalman_gain_ph: Number(
+            (readings.reduce((sum, row) => sum + Number(row.kalman_gain_ph || 0), 0) / readings.length).toFixed(4)
+          ),
+          kalman_gain_temperature: Number(
+            (readings.reduce((sum, row) => sum + Number(row.kalman_gain_temperature || 0), 0) / readings.length).toFixed(4)
+          ),
         }
       : {
           ph: 0,
           temperature: 0,
           residual_ph: 0,
           residual_temperature: 0,
+          kalman_gain_ph: 0,
+          kalman_gain_temperature: 0,
         };
 
     return res.json({
@@ -62,8 +91,8 @@ const getDashboardStats = async (req, res, next) => {
         latest,
         latestHeartbeat,
         hardware: {
-          connected: hardwareConnected,
-          status: hardwareConnected ? "CONNECTED" : "DISCONNECTED",
+          connected: hardwareState.connected,
+          status: hardwareState.status,
           deviceId: latestHeartbeat?.device_id || null,
           lastHeartbeatAt: latestHeartbeat?.created_at || null,
           firmwareVersion: latestHeartbeat?.firmware_version || null,

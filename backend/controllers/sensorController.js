@@ -1,13 +1,15 @@
 const supabase = require("../config/supabase");
 const {
   getKalmanSettings,
-  applyKalmanSeries,
+  applyKalmanSeriesDetailed,
 } = require("../services/kalmanService");
 const { calculateResidual } = require("../services/residualService");
 const {
   detectFaultStatus,
+  getAdaptiveSettings,
   getFaultThresholds,
 } = require("../services/faultDetectionService");
+const { summarizeSimulationValidation } = require("../services/validationService");
 
 const DEFAULT_HISTORY_WINDOW = 25;
 
@@ -33,7 +35,13 @@ const fetchRecentSeries = async (limit = DEFAULT_HISTORY_WINDOW) => {
   return (data || []).reverse();
 };
 
-const processMeasurement = async ({ ph, temperature, sourceType = "LIVE", simulationMode = null }) => {
+const processMeasurement = async ({
+  ph,
+  temperature,
+  sourceType = "LIVE",
+  simulationMode = null,
+  expectedStatus = null,
+}) => {
   validateReading(ph, "pH");
   validateReading(temperature, "Temperature");
 
@@ -42,11 +50,14 @@ const processMeasurement = async ({ ph, temperature, sourceType = "LIVE", simula
   const temperatureSeries = recentSeries.map((row) => row.temperature).concat(temperature);
 
   const kalmanSettings = getKalmanSettings();
-  const filteredPhSeries = applyKalmanSeries(phSeries, kalmanSettings.ph);
-  const filteredTemperatureSeries = applyKalmanSeries(temperatureSeries, kalmanSettings.temperature);
+  const adaptiveSettings = getAdaptiveSettings();
+  const phDiagnostics = applyKalmanSeriesDetailed(phSeries, kalmanSettings.ph, adaptiveSettings);
+  const temperatureDiagnostics = applyKalmanSeriesDetailed(temperatureSeries, kalmanSettings.temperature, adaptiveSettings);
 
-  const filteredPh = filteredPhSeries[filteredPhSeries.length - 1];
-  const filteredTemperature = filteredTemperatureSeries[filteredTemperatureSeries.length - 1];
+  const latestPhDiagnostics = phDiagnostics[phDiagnostics.length - 1];
+  const latestTemperatureDiagnostics = temperatureDiagnostics[temperatureDiagnostics.length - 1];
+  const filteredPh = latestPhDiagnostics.filteredEstimate;
+  const filteredTemperature = latestTemperatureDiagnostics.filteredEstimate;
   const residualPh = calculateResidual(ph, filteredPh);
   const residualTemperature = calculateResidual(temperature, filteredTemperature);
 
@@ -67,11 +78,20 @@ const processMeasurement = async ({ ph, temperature, sourceType = "LIVE", simula
   const payload = {
     ph,
     temperature,
+    predicted_ph: Number(latestPhDiagnostics.predictedEstimate.toFixed(4)),
+    predicted_temperature: Number(latestTemperatureDiagnostics.predictedEstimate.toFixed(4)),
     filtered_ph: Number(filteredPh.toFixed(4)),
     filtered_temperature: Number(filteredTemperature.toFixed(4)),
     residual_ph: Number(residualPh.toFixed(4)),
     residual_temperature: Number(residualTemperature.toFixed(4)),
+    kalman_gain_ph: Number(latestPhDiagnostics.kalmanGain.toFixed(4)),
+    kalman_gain_temperature: Number(latestTemperatureDiagnostics.kalmanGain.toFixed(4)),
+    adaptive_process_noise_ph: Number(latestPhDiagnostics.adaptiveProcessNoise.toFixed(6)),
+    adaptive_measurement_noise_ph: Number(latestPhDiagnostics.adaptiveMeasurementNoise.toFixed(6)),
+    adaptive_process_noise_temperature: Number(latestTemperatureDiagnostics.adaptiveProcessNoise.toFixed(6)),
+    adaptive_measurement_noise_temperature: Number(latestTemperatureDiagnostics.adaptiveMeasurementNoise.toFixed(6)),
     status: classification.status,
+    expected_status: expectedStatus,
     classification_reason: classification.reason,
     confidence_score: Number((classification.confidence * 100).toFixed(2)),
     source_type: sourceType,
@@ -93,6 +113,12 @@ const processMeasurement = async ({ ph, temperature, sourceType = "LIVE", simula
 
 const buildSimulationFrames = (mode, steps, baselinePh, baselineTemperature, magnitude) => {
   const frames = [];
+  const expectedStatus =
+    mode === "CONTAMINATION"
+      ? "CONTAMINATION"
+      : mode === "CRITICAL"
+        ? "CRITICAL"
+        : "SENSOR_FAULT";
 
   for (let index = 0; index < steps; index += 1) {
     let ph = baselinePh;
@@ -123,6 +149,7 @@ const buildSimulationFrames = (mode, steps, baselinePh, baselineTemperature, mag
     frames.push({
       ph: Number(ph.toFixed(3)),
       temperature: Number(temperature.toFixed(3)),
+      expectedStatus,
     });
   }
 
@@ -192,9 +219,12 @@ const simulateSensorScenario = async (req, res, next) => {
         temperature: frame.temperature,
         sourceType: "SIMULATED",
         simulationMode: mode,
+        expectedStatus: frame.expectedStatus,
       });
       storedFrames.push(stored);
     }
+
+    const validation = summarizeSimulationValidation(mode, storedFrames);
 
     return res.status(201).json({
       success: true,
@@ -202,6 +232,7 @@ const simulateSensorScenario = async (req, res, next) => {
       mode,
       count: storedFrames.length,
       data: storedFrames,
+      validation,
     });
   } catch (error) {
     return next(error);

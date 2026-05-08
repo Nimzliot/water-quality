@@ -54,10 +54,18 @@ Response fields:
 
 - `ph`
 - `temperature`
+- `predicted_ph`
+- `predicted_temperature`
 - `filtered_ph`
 - `filtered_temperature`
 - `residual_ph`
 - `residual_temperature`
+- `kalman_gain_ph`
+- `kalman_gain_temperature`
+- `adaptive_process_noise_ph`
+- `adaptive_measurement_noise_ph`
+- `adaptive_process_noise_temperature`
+- `adaptive_measurement_noise_temperature`
 - `status`
 - `classification_reason`
 - `confidence_score`
@@ -117,6 +125,17 @@ Supported modes:
 - `CONTAMINATION`
 - `CRITICAL`
 
+Simulation response also includes `validation` with:
+
+- `expectedStatus`
+- `exactMatches`
+- `exactMatchRate`
+- `anomalyDetectionRate`
+- `firstExpectedDetectionStep`
+- `falseNegativeCount`
+- `averageConfidenceScore`
+- `observedStatusDistribution`
+
 ### `GET /sensor/history`
 
 Headers:
@@ -154,3 +173,10 @@ Returns:
 - `SENSOR_FAULT`: adaptive residual anomaly persists across recent frames
 - `CONTAMINATION`: water values leave the safe range while residual behavior stays stable
 - `CRITICAL`: contamination and sensor-fault indicators appear together
+
+## Kalman Modeling
+
+- The backend computes a predicted state before each measurement update
+- The corrected state is stored as the filtered reading
+- Kalman gain and adaptive process/measurement noise are stored for each frame
+- Residuals are computed as `actual - filtered`

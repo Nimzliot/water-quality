@@ -20,6 +20,7 @@ function Settings() {
   });
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [validation, setValidation] = useState(null);
 
   const handleChange = (event) => {
     setFormState((previous) => ({
@@ -32,6 +33,7 @@ function Settings() {
     event.preventDefault();
     setMessage("");
     setError("");
+    setValidation(null);
 
     try {
       const response = await runSimulation({
@@ -43,6 +45,7 @@ function Settings() {
       });
 
       setMessage(`Simulation completed: ${response.mode} generated ${response.count} frames.`);
+      setValidation(response.validation || null);
     } catch (requestError) {
       setError(requestError.response?.data?.message || "Simulation failed");
     }
@@ -55,7 +58,8 @@ function Settings() {
         <div className="mt-4 space-y-3 text-sm text-slate-400">
           <p>Heartbeat packets should arrive every 5 seconds.</p>
           <p>Hardware becomes disconnected when heartbeats stop for 15 seconds.</p>
-          <p>Residual thresholds are now blended with recent residual behavior using an adaptive window.</p>
+          <p>Residual thresholds are blended with recent residual behavior using an adaptive window.</p>
+          <p>The backend now stores predicted sensor states before each Kalman correction step.</p>
           <p>Persistent residual anomalies are interpreted as likely sensor drift or sensor fault.</p>
           <p>Out-of-range water values with stable residuals are interpreted as contamination events.</p>
         </div>
@@ -100,6 +104,38 @@ function Settings() {
             {simulationLoading ? "Running Simulation..." : "Run Experimental Validation"}
           </button>
         </form>
+
+        {validation ? (
+          <div className="mt-5 rounded-[24px] border border-white/8 bg-white/[0.03] p-5">
+            <p className="section-title">Validation Summary</p>
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              <div className="rounded-2xl bg-slate-950/40 px-4 py-3">
+                <p className="text-sm text-slate-400">Expected Status</p>
+                <p className="mt-2 font-medium text-white">{validation.expectedStatus}</p>
+              </div>
+              <div className="rounded-2xl bg-slate-950/40 px-4 py-3">
+                <p className="text-sm text-slate-400">Exact Match Rate</p>
+                <p className="mt-2 font-medium text-white">{validation.exactMatchRate}%</p>
+              </div>
+              <div className="rounded-2xl bg-slate-950/40 px-4 py-3">
+                <p className="text-sm text-slate-400">Anomaly Detection Rate</p>
+                <p className="mt-2 font-medium text-white">{validation.anomalyDetectionRate}%</p>
+              </div>
+              <div className="rounded-2xl bg-slate-950/40 px-4 py-3">
+                <p className="text-sm text-slate-400">First Expected Detection Step</p>
+                <p className="mt-2 font-medium text-white">{validation.firstExpectedDetectionStep ?? "Not detected"}</p>
+              </div>
+              <div className="rounded-2xl bg-slate-950/40 px-4 py-3">
+                <p className="text-sm text-slate-400">False Negatives</p>
+                <p className="mt-2 font-medium text-white">{validation.falseNegativeCount}</p>
+              </div>
+              <div className="rounded-2xl bg-slate-950/40 px-4 py-3">
+                <p className="text-sm text-slate-400">Average Confidence</p>
+                <p className="mt-2 font-medium text-white">{validation.averageConfidenceScore}%</p>
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );
