@@ -5,27 +5,27 @@ function History() {
 
   const getStatusChipClass = (status) => {
     if (status === "SENSOR_FAULT") {
-      return "border-amber-300/20 bg-amber-300/10 text-amber-100";
+      return "border-black/10 bg-black/5 text-black";
     }
     if (status === "CONTAMINATION") {
-      return "border-sky-300/20 bg-sky-300/10 text-sky-100";
+      return "border-black/10 bg-black/5 text-black";
     }
     if (status === "CRITICAL") {
-      return "border-rose-400/20 bg-rose-400/10 text-rose-200";
+      return "border-black/10 bg-black/5 text-black";
     }
-    return "border-emerald-400/20 bg-emerald-400/10 text-emerald-200";
+    return "border-black/10 bg-black/5 text-neutral-700";
   };
 
   return (
     <section className="glass-panel p-5 md:p-6">
       <div className="mb-4">
         <p className="section-title">Historical Log</p>
-        <h3 className="mt-2 text-2xl font-semibold text-white">Telemetry Archive</h3>
+        <h3 className="mt-2 text-2xl font-semibold text-black">Telemetry Archive</h3>
       </div>
 
       <div className="overflow-x-auto">
         <table className="min-w-full text-left text-sm">
-          <thead className="text-slate-500">
+          <thead className="text-slate-600">
             <tr>
               <th className="px-3 py-3 font-medium">Time</th>
               <th className="px-3 py-3 font-medium">pH</th>
@@ -40,7 +40,7 @@ function History() {
           </thead>
           <tbody>
             {history.map((row) => (
-              <tr key={row.id} className="border-t border-white/5 text-slate-200">
+              <tr key={row.id} className="border-t border-black/5 text-slate-800">
                 <td className="px-3 py-4">{new Date(row.created_at).toLocaleString()}</td>
                 <td className="px-3 py-4">{row.ph}</td>
                 <td className="px-3 py-4">{row.temperature}</td>

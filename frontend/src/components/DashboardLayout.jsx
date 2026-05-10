@@ -15,10 +15,10 @@ function DashboardLayout() {
             <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
               <div>
                 <p className="section-title">Operational Deck</p>
-                <h2 className="mt-3 text-3xl font-semibold leading-tight text-stone-50 md:text-5xl">
+                <h2 className="mt-3 text-3xl font-semibold leading-tight text-stone-950 md:text-5xl">
                   Cross-Validated Water Quality Control Room
                 </h2>
-                <p className="mt-4 max-w-3xl text-sm leading-7 text-stone-300/75 md:text-base">
+                <p className="mt-4 max-w-3xl text-sm leading-7 text-stone-600 md:text-base">
                   A steadier, more custom operator shell for live telemetry, device heartbeat visibility, analytics, alerts, and historical review.
                 </p>
               </div>
@@ -27,11 +27,11 @@ function DashboardLayout() {
                 <div
                   className={`status-chip justify-center ${
                     hardware.connected
-                      ? "border-emerald-300/20 bg-emerald-300/10 text-emerald-100"
-                      : "border-amber-300/20 bg-amber-300/10 text-amber-100"
+                      ? "border-black/15 bg-black/5 text-black"
+                      : "border-black/10 bg-black/5 text-neutral-600"
                   }`}
                 >
-                  <span className={`h-2.5 w-2.5 rounded-full ${hardware.connected ? "bg-emerald-300" : "bg-amber-300"}`} />
+                  <span className={`h-2.5 w-2.5 rounded-full ${hardware.connected ? "bg-black" : "bg-neutral-500"}`} />
                   {hardware.connected ? "Hardware Connected" : "Hardware Disconnected"}
                 </div>
                 <button className="secondary-button" onClick={refresh} disabled={loading}>
@@ -41,7 +41,7 @@ function DashboardLayout() {
             </div>
           </div>
 
-          {error ? <div className="glass-panel border border-red-300/20 p-4 text-red-200">{error}</div> : null}
+          {error ? <div className="glass-panel border border-black/10 bg-black/[0.03] p-4 text-neutral-800">{error}</div> : null}
           <Outlet />
         </main>
       </div>

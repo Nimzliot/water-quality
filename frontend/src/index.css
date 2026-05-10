@@ -3,24 +3,24 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
-  --bg-1: #120f0d;
-  --bg-2: #1b1713;
-  --panel: rgba(34, 28, 23, 0.82);
-  --panel-soft: rgba(48, 39, 31, 0.7);
-  --border: rgba(240, 220, 197, 0.12);
-  --text-soft: #b8aca0;
-  --accent: #e0b07a;
-  --accent-soft: #7a5b3c;
+  color-scheme: light;
+  --bg-1: #ffffff;
+  --bg-2: #f3f3f3;
+  --panel: rgba(255, 255, 255, 0.92);
+  --panel-soft: rgba(245, 245, 245, 0.88);
+  --border: rgba(0, 0, 0, 0.1);
+  --text-soft: #525252;
+  --accent: #111111;
+  --accent-soft: #737373;
 }
 
 body {
-  @apply min-h-screen text-slate-100 antialiased;
+  @apply min-h-screen text-slate-900 antialiased;
   background-image:
-    radial-gradient(circle at top left, rgba(224, 176, 122, 0.16), transparent 22%),
-    radial-gradient(circle at 85% 0%, rgba(170, 129, 86, 0.12), transparent 18%),
-    radial-gradient(circle at 50% 100%, rgba(255, 236, 214, 0.05), transparent 24%),
-    linear-gradient(135deg, var(--bg-1) 0%, #17120f 35%, var(--bg-2) 70%, #100d0b 100%);
+    radial-gradient(circle at top left, rgba(0, 0, 0, 0.05), transparent 22%),
+    radial-gradient(circle at 85% 0%, rgba(0, 0, 0, 0.04), transparent 18%),
+    radial-gradient(circle at 50% 100%, rgba(0, 0, 0, 0.025), transparent 24%),
+    linear-gradient(135deg, var(--bg-1) 0%, #fafafa 35%, var(--bg-2) 70%, #ededed 100%);
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
   overflow-x: hidden;
 }
@@ -31,47 +31,47 @@ body {
 
 .glass-panel {
   @apply rounded-[30px] backdrop-blur-2xl;
-  background: linear-gradient(180deg, rgba(37, 30, 24, 0.92), rgba(23, 19, 16, 0.82));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(244, 244, 244, 0.92));
   border: 1px solid var(--border);
   box-shadow:
-    0 24px 70px rgba(0, 0, 0, 0.28),
-    inset 0 1px 0 rgba(255, 244, 231, 0.04);
+    0 18px 45px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
 }
 
 .input-field {
-  @apply w-full rounded-2xl px-4 py-3 text-sm text-white outline-none transition duration-200;
-  border: 1px solid rgba(240, 220, 197, 0.12);
-  background: rgba(20, 17, 14, 0.86);
+  @apply w-full rounded-2xl px-4 py-3 text-sm text-black outline-none transition duration-200;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .input-field:focus {
-  border-color: rgba(224, 176, 122, 0.6);
-  background: rgba(17, 14, 11, 0.96);
+  border-color: rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 1);
 }
 
 .primary-button {
-  @apply rounded-2xl px-4 py-3 font-medium text-stone-950 transition disabled:cursor-not-allowed disabled:opacity-60;
-  background: linear-gradient(135deg, #f0c89b, #d19a5e);
-  box-shadow: 0 14px 30px rgba(209, 154, 94, 0.22);
+  @apply rounded-2xl px-4 py-3 font-medium text-white transition disabled:cursor-not-allowed disabled:opacity-60;
+  background: linear-gradient(135deg, #111111, #2a2a2a);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.14);
 }
 
 .primary-button:hover {
-  background: linear-gradient(135deg, #f5d5b0, #dfaa71);
+  background: linear-gradient(135deg, #000000, #1a1a1a);
 }
 
 .secondary-button {
-  @apply rounded-2xl px-4 py-3 font-medium text-stone-100 transition;
-  border: 1px solid rgba(240, 220, 197, 0.12);
-  background: rgba(255, 248, 239, 0.04);
+  @apply rounded-2xl px-4 py-3 font-medium text-stone-900 transition;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .secondary-button:hover {
-  background: rgba(255, 248, 239, 0.08);
+  background: rgba(240, 240, 240, 0.95);
 }
 
 .section-title {
   @apply text-[11px] font-medium uppercase tracking-[0.38em];
-  color: #d6a878;
+  color: #404040;
 }
 
 .status-chip {
@@ -79,6 +79,6 @@ body {
 }
 
 .tone-card {
-  background: linear-gradient(180deg, rgba(55, 44, 35, 0.78), rgba(28, 23, 18, 0.82));
-  border: 1px solid rgba(240, 220, 197, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(241, 241, 241, 0.92));
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }

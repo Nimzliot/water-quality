@@ -13,7 +13,7 @@ import { DashboardDataProvider } from "./context/DashboardDataContext";
 const ProtectedRoute = ({ children }) => {
   const { token, authLoading } = useAuth();
   if (authLoading) {
-    return <div className="flex min-h-screen items-center justify-center text-slate-300">Loading session...</div>;
+    return <div className="flex min-h-screen items-center justify-center text-slate-600">Loading session...</div>;
   }
   return token ? children : <Navigate to="/login" replace />;
 };
@@ -21,7 +21,7 @@ const ProtectedRoute = ({ children }) => {
 const PublicRoute = ({ children }) => {
   const { token, authLoading } = useAuth();
   if (authLoading) {
-    return <div className="flex min-h-screen items-center justify-center text-slate-300">Loading session...</div>;
+    return <div className="flex min-h-screen items-center justify-center text-slate-600">Loading session...</div>;
   }
   return token ? <Navigate to="/dashboard" replace /> : children;
 };

@@ -4,10 +4,10 @@
 #include <DallasTemperature.h>
 #include <ArduinoJson.h>
 
-const char* WIFI_SSID = "YOUR_WIFI_NAME";
-const char* WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
-const char* API_URL = "http://your-server-ip:5000/api/sensor/data";
-const char* HEARTBEAT_URL = "http://your-server-ip:5000/api/sensor/heartbeat";
+const char* WIFI_SSID = "";
+const char* WIFI_PASSWORD = "";
+const char* API_URL = "http://:5000/api/sensor/data";
+const char* HEARTBEAT_URL = "http://:5000/api/sensor/heartbeat";
 const char* DEVICE_ID = "ESP32-WQ-01";
 const char* FIRMWARE_VERSION = "1.0.0";
 
@@ -21,7 +21,7 @@ float readPhValue() {
   int rawValue = analogRead(PH_PIN);
   float voltage = rawValue * (3.3 / 4095.0);
 
-  // Simple placeholder mapping for a typical analog pH interface board.
+ 
   return 7.0 + ((2.5 - voltage) / 0.18);
 }
 
